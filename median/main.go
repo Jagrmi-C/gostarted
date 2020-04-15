@@ -15,13 +15,11 @@ func median(intsArr []int) float64 {
 	if len(intsArr)%2 == 1 {
 		log.Println("%2 == 1")
 		answer = float64(intsArr[val])
-		log.Println("Answer:", answer)
 		return answer
 	}
 
 	log.Println("%2 == 0")
 	answer = (float64(intsArr[val-1]) + float64(intsArr[val])) / 2
-	log.Println("Answer:", answer)
 
 	return answer
 }
