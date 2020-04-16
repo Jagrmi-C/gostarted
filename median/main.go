@@ -7,21 +7,16 @@ import (
 )
 
 func median(intsArr []int) float64 {
-	var answer float64
 	sort.Ints(intsArr)
 	log.Println("Sorted list:", intsArr)
 	val := len(intsArr) / 2
-	log.Println("Half value: ", val)
 	if len(intsArr)%2 == 1 {
 		log.Println("%2 == 1")
-		answer = float64(intsArr[val])
-		return answer
+		return float64(intsArr[val])
 	}
 
 	log.Println("%2 == 0")
-	answer = (float64(intsArr[val-1]) + float64(intsArr[val])) / 2
-
-	return answer
+	return (float64(intsArr[val-1]) + float64(intsArr[val])) / 2
 }
 
 func main() {
