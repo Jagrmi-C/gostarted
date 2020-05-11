@@ -22,15 +22,15 @@ func IncreseX2Handler(w http.ResponseWriter, r *http.Request) {
         return
     }
 
-    var contact lib.Test_struct
+    var exampleObj lib.Test_struct
 
-    if err := json.Unmarshal(b, &contact); err != nil {
+    if err := json.Unmarshal(b, &exampleObj); err != nil {
         lib.ReturnInternalError(w)
         return
     }
 
     // var res string
-    res := lib.IsIntegerX2(contact.ID)
+    res := lib.IsIntegerX2(exampleObj.ID)
 
     if _, err := w.Write([]byte(res)); err != nil {
         log.Println(err)
