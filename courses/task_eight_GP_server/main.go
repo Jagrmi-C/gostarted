@@ -11,7 +11,6 @@ func main() {
     router := mux.NewRouter()
     router.HandleFunc("/api/v0/", handlers.GETRootHandler).Methods(http.MethodGet)
     router.HandleFunc("/api/v0/", handlers.POSTRootHandler).Methods(http.MethodPost)
-    router.HandleFunc("/api/v0/test/", handlers.TestHandler).Methods(http.MethodGet)
     router.HandleFunc("/api/v0/logout/", handlers.DeleteCookie).Methods(http.MethodGet)
 
     log.Println("Starting API server on 3003")

@@ -33,16 +33,19 @@ func addCookie(w http.ResponseWriter, name string, value string) {
 
 func DeleteCookie(w http.ResponseWriter, r *http.Request) {
 	for _, cookie := range r.Cookies() {
+		expire := time.Now().AddDate(1, 1, 1)
+
 		cookie.Name = "unused"
 		cookie.Value = ""
 		cookie.MaxAge = -1
 		cookie.Path = "/api/v0/"
 		cookie.HttpOnly = true
+		cookie.Expires = expire
 
 		http.SetCookie(w, cookie)
     }
 
-	respText := []byte(`<a href="/api/v0/test/">HOME</a><br>old cookie del!\n`)
+	respText := []byte(`<a href="/api/v0/">HOME</a><br>old cookie del!\n`)
 
 	if _, err := w.Write(respText); err != nil {
 		log.Println(err)
@@ -112,9 +115,9 @@ func POSTRootHandler(w http.ResponseWriter, r *http.Request) {
 	// }
 }
 
-func TestHandler(w http.ResponseWriter, r *http.Request) {
-	htmlBody := `<a href="/api/v0/">HOME</a>`
-	if _, err := w.Write([]byte(htmlBody)); err != nil {
-		log.Println(err)
-	}
-}
+// func TestHandler(w http.ResponseWriter, r *http.Request) {
+// 	htmlBody := `<a href="/api/v0/">HOME</a>`
+// 	if _, err := w.Write([]byte(htmlBody)); err != nil {
+// 		log.Println(err)
+// 	}
+// }
