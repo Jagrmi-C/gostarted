@@ -31,7 +31,7 @@ func addCookie(w http.ResponseWriter, name string, value string) {
     http.SetCookie(w, &cookie)
 }
 
-func DeleteCookie(w http.ResponseWriter, r *http.Request) {
+func SetUnusedCookie(w http.ResponseWriter, r *http.Request) {
 	for _, cookie := range r.Cookies() {
 		expire := time.Now().AddDate(1, 1, 1)
 
