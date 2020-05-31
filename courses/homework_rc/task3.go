@@ -7,9 +7,12 @@ import (
 
 var sl []string
 var wg sync.WaitGroup
+var aMutex sync.Mutex
 
 func addLine(words string) {
+	aMutex.Lock()
 	sl = append(sl, words)
+	aMutex.Unlock()
 	wg.Done()
 }
 

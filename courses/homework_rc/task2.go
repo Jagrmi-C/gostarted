@@ -9,11 +9,19 @@ import (
 func main() {
 	start := time.Now()
 	var t *time.Timer
-	t = time.AfterFunc(randomDuration(), func() {
-		fmt.Println(time.Now().Sub(start))
+	reset := make(chan bool)
+
+	t = time.AfterFunc(
+		randomDuration(),
+		func() {
+			fmt.Println(time.Now().Sub(start))
+			reset <- true
+		},
+	)
+	for time.Since(start) < 5*time.Second {
+		<-reset
 		t.Reset(randomDuration())
-	})
-	time.Sleep(5 * time.Second)
+	}
 }
 
 func randomDuration() time.Duration {

@@ -7,6 +7,7 @@ import (
 
 func main() {
 	var wg sync.WaitGroup
+	var aMutex sync.Mutex
 
 	incrementer := 0
 	gs := 100
@@ -14,10 +15,12 @@ func main() {
 
 	for i := 0; i < gs; i++ {
 		go func() {
+			aMutex.Lock()
 			v := incrementer
 			v++
 			incrementer = v
 			fmt.Println(incrementer)
+			aMutex.Unlock()
 			wg.Done()
 		}()
 	}
