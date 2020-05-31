@@ -12,8 +12,8 @@ func (e VehicleError) Error() string {
 }
 
 type Vehicle interface {
-	Move(distance float64) interface{}
-	TankUp(quantity float64) interface{}
+	Move(distance float64) error
+	TankUp(quantity float64) error
 }
 
 type Auto struct {
@@ -36,7 +36,7 @@ func (auto *Auto) Move(distance float64) error {
 	return nil
 }
 
-func (auto *Auto) TankUp(quantity float64) interface{} {
+func (auto *Auto) TankUp(quantity float64) error {
 	if auto.FuelLevel + quantity > auto.MaxFuelLevel {
 		return VehicleError("Too big fuel!!!")
 	}

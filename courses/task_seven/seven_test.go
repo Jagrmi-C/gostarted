@@ -2,7 +2,6 @@ package main
 
 import (
 	"testing"
-	"reflect"
 )
 
 func TestSum(t *testing.T) {
@@ -30,7 +29,7 @@ func TestMove(t *testing.T) {
 
 	for _, ex := range tests {
         got := ex.input.Move(ex.distance)
-        if !reflect.DeepEqual(ex.want, got) {
+        if (ex.want != got) {
             t.Fatalf("expected: %v, got: %v", ex.want, got)
         }
     }
@@ -54,7 +53,7 @@ func TestTankUp(t *testing.T) {
 
 	for _, ex := range tests {
         got := ex.input.TankUp(ex.quantity)
-        if !reflect.DeepEqual(ex.want, got) {
+        if (ex.want != got) {
             t.Fatalf("expected: %v, got: %v", ex.want, got)
         }
     }
