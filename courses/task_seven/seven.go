@@ -23,7 +23,7 @@ type Auto struct {
 	MaxFuelLevel    float64
 }
 
-func (auto *Auto) Move(distance float64) interface{} {
+func (auto *Auto) Move(distance float64) error {
 	disctanceFuelConsumption := distance / auto.FuelConsumption
 	if auto.FuelLevel < disctanceFuelConsumption {
 		return VehicleError("Too small fuel!!!")
