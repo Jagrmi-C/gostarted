@@ -1,0 +1,35 @@
+version: "3"
+services:
+    api:
+        build:
+            context: .
+            dockerfile: dev.dockerfile
+        ports:
+            - 8888:8888
+        command: "/bin/sh -c 'go run project/app.go'"
+        volumes:
+            - ./:/app
+        environment:
+            - POSTGRES_DB=${DB_NAME}
+            - POSTGRES_USER=${DB_USER}
+            - POSTGRES_PASSWORD=${DB_PASSWORD}
+            - SCHEMA=public
+            - DB_PORT=${DB_PORT}
+            - DB_SSLMODE=disable
+            - DB_HOST=postgres-goapp
+            - DATABASE_URL1=${DATABASE_URL1}
+            - DATABASE_URL=${DATABASE_URL}
+
+    postgres-goapp:
+        restart: always
+        image: postgres:13-alpine
+        container_name: postgres-goapp
+        environment:
+            - POSTGRES_DB=${DB_NAME}
+            - POSTGRES_USER=${DB_USER}
+            - POSTGRES_PASSWORD=${DB_PASSWORD}
+            - SCHEMA=public
+        ports:
+            - 5431:5432
+        volumes:
+            - ../data/postgres:/var/lib/postgresql/data
