@@ -1,8 +1,8 @@
 package models
 
-import (
-	"time"
-)
+// import (
+// 	"time"
+// )
 
 // User schema of the user table
 type User struct {
@@ -17,5 +17,9 @@ type Task struct {
 	UUID      string 	`json:"uuid"`
 	Title     string 	`json:"title"`
 	GroupUUID string 	`json:"group_uuid"`
-	Dt        time.Time `json:"dt"`
+}
+
+func CreateTask(title string) *Task {
+	exampleUUID := "5f3292fd-3238-444e-96d2-ee313d140166"
+    return &Task{exampleUUID, title, exampleUUID}  // enforce the default value here
 }

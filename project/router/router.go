@@ -22,16 +22,17 @@ func Router() *mux.Router {
 
 	router.HandleFunc("/groups/", handlers.Default).Methods(http.MethodGet)
 	router.HandleFunc("/groups/", handlers.Default).Methods(http.MethodPost)
-	router.HandleFunc("/tasks/", handlers.Default).Methods(http.MethodGet)
-	router.HandleFunc("/tasks/", handlers.Default).Methods(http.MethodPost)
+	router.HandleFunc("/tasks/", handlers.GetTasksHandler).Methods(http.MethodGet)
+	router.HandleFunc("/tasks/", handlers.CreateTaskHandler).Methods(http.MethodPost)
 
 	router.HandleFunc("/timeframes/", handlers.Default).Methods(http.MethodPost)
-	router.HandleFunc("/tasks/{id}", handlers.GetTaskHandler).Methods(http.MethodGet)
-	router.HandleFunc("/tasks/{uuid}", handlers.UpdateTaskHandler).Methods(http.MethodPut)
-	router.HandleFunc("/tasks/{id}", handlers.Default).Methods(http.MethodDelete)
 
-	router.HandleFunc("/groups/{id}", handlers.Default).Methods(http.MethodPut)
-	router.HandleFunc("/groups/{id}", handlers.Default).Methods(http.MethodDelete)
+	router.HandleFunc("/tasks/{uuid}", handlers.GetTaskHandler).Methods(http.MethodGet)
+	router.HandleFunc("/tasks/{uuid}", handlers.UpdateTaskHandler).Methods(http.MethodPut)
+	router.HandleFunc("/tasks/{uuid}", handlers.Default).Methods(http.MethodDelete)
+
+	router.HandleFunc("/groups/{uuid}", handlers.Default).Methods(http.MethodPut)
+	router.HandleFunc("/groups/{uuid}", handlers.Default).Methods(http.MethodDelete)
 
     return router
 }

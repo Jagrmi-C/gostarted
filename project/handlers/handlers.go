@@ -1,16 +1,17 @@
 package handlers
 
 import (
-	// "strconv"
-	"fmt"
 	"context"
 	"encoding/json"
+	"fmt"
+	"log"
 	"net/http"
 	"time"
+
 	// "io/ioutil"
-	"github.com/gorilla/mux"
 	"github.com/Jagrmi-C/gostarted/project/db"
 	"github.com/Jagrmi-C/gostarted/project/models"
+	"github.com/gorilla/mux"
 )
 
 type ResponseCustom struct {
@@ -25,7 +26,7 @@ type ResponseCustom struct {
 	} `json:"headers"`
 }
 
-func GetTaskHandler(w http.ResponseWriter, req *http.Request) {
+func GetTaskHandlerMy(w http.ResponseWriter, req *http.Request) {
 	// create the postgres db connection
 	conn := db.CreateConnection()
 
@@ -71,35 +72,28 @@ func UpdateTaskHandler(w http.ResponseWriter, req *http.Request) {
 	// close the db connection
 	defer conn.Close(context.Background())
 
-	vars := mux.Vars(req)
-	fmt.Println(vars, vars["uuid"])
-	// uuid, err := strconv.ParseUint(vars["uuid"], 10, 32)
-	uuid, ok := vars["uuid"]
-	if ok {
-		fmt.Println("Exists!")
-	}
-	fmt.Println(uuid)
-	fmt.Println(req.Body)
-	// body, err := ioutil.ReadAll(req.Body)
-	// if err != nil {
-	// 	fmt.Println(err)
-	// 	// responses.ERROR(w, http.StatusUnprocessableEntity, err)
-	// 	return
-	// }
-	// fmt.Println("BODY", body)
-	task := models.Task{}
-	err := json.NewDecoder(req.Body).Decode(&task);
+	uuid := mux.Vars(req)["uuid"]
+
+	var task models.Task
+	err := json.NewDecoder(req.Body).Decode(&task)
     if err != nil {
-		fmt.Println("X", err)
+        http.Error(w, err.Error(), http.StatusBadRequest)
+        return
 	}
-	fmt.Println(task)
-	// err = json.Unmarshal(body, &task)
-	// if err != nil {
-		// responses.ERROR(w, http.StatusUnprocessableEntity, err)
-		// return
-	// }
-	// fmt.Println(task)
-	// fmt.1
+
+	task.UUID = uuid
+
+	err = db.UpdateProduct(conn, &task)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+
+	err = json.NewEncoder(w).Encode(task)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
 }
 
 func Default(w http.ResponseWriter, req *http.Request) {
@@ -108,4 +102,76 @@ func Default(w http.ResponseWriter, req *http.Request) {
 
 func DefaultTest(w http.ResponseWriter, req *http.Request) {
 	fmt.Fprintf(w, "This is SPARTA!\n")
+}
+
+func CreateTaskHandler(w http.ResponseWriter, req *http.Request) {
+	var task models.Task
+	err := json.NewDecoder(req.Body).Decode(&task)
+    if err != nil {
+        http.Error(w, err.Error(), http.StatusBadRequest)
+        return
+	}
+
+	conn := db.CreateConnection()
+
+	defer conn.Close(context.Background())
+
+	err = db.CreateTask(conn, &task)
+
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+
+	err = json.NewEncoder(w).Encode(task)
+
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+}
+
+func GetTaskHandler(w http.ResponseWriter, req *http.Request) {
+	uuid := mux.Vars(req)["uuid"]
+
+	conn := db.CreateConnection()
+
+	defer conn.Close(context.Background())
+
+	var task models.Task
+	err := db.GetTask(conn, uuid, &task)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+
+	err = json.NewEncoder(w).Encode(task)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+}
+
+func GetTasksHandler(w http.ResponseWriter, req *http.Request) {
+	conn := db.CreateConnection()
+
+	defer conn.Close(context.Background())
+	tasks, err := db.GetTasks(conn)
+
+	type Answer struct {
+		Tasks	[]models.Task
+	}
+
+	var an Answer
+
+	an.Tasks = tasks
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+	err = json.NewEncoder(w).Encode(an)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
 }

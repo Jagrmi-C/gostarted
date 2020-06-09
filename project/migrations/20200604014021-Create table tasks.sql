@@ -3,8 +3,7 @@
 CREATE TABLE tasks (
     uuid UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     title varchar(20) NOT NULL UNIQUE,
-    group_uuid UUID REFERENCES groups(uuid),
-    dt timestamptz
+    group_uuid UUID REFERENCES groups(uuid)
 );
 -- +migrate Down
 DROP TABLE tasks;
