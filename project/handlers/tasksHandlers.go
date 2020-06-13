@@ -4,15 +4,20 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
-	"log"
 	"net/http"
 	"time"
 
-	// "io/ioutil"
+	"github.com/gorilla/mux"
+	lr "github.com/sirupsen/logrus"
+
 	"github.com/Jagrmi-C/gostarted/project/db"
 	"github.com/Jagrmi-C/gostarted/project/models"
-	"github.com/gorilla/mux"
+	"github.com/Jagrmi-C/gostarted/project/logger"
 )
+
+func init()  {
+	logger.LoggerInitialization()
+}
 
 type ResponseCustom struct {
 	Q1	   string `json:"q1"`
@@ -65,32 +70,72 @@ func GetTaskHandlerMy(w http.ResponseWriter, req *http.Request) {
 	fmt.Println("result", lenght)
 }
 
+func GetTaskHandler(w http.ResponseWriter, req *http.Request) {
+	uuid := mux.Vars(req)["uuid"]
+	var task models.Task
+
+	err := db.GetTask(uuid, &task)
+	if err != nil {
+		lr.Error(err)
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+
+	lr.Info("Get task from DB:", task.UUID)
+
+	err = json.NewEncoder(w).Encode(task)
+	if err != nil {
+		lr.Error(err)
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+}
+
+func GetTasksHandler(w http.ResponseWriter, req *http.Request) {
+	tasks, err := db.GetTasks()
+	lr.Info("Get all tasks from DB")
+
+	var bodyStruct models.TasksStruct
+
+	bodyStruct.Task = tasks
+	if err != nil {
+		lr.Error(err)
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+	err = json.NewEncoder(w).Encode(bodyStruct)
+	if err != nil {
+		lr.Error(err)
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+}
+
 func UpdateTaskHandler(w http.ResponseWriter, req *http.Request) {
-	// create the postgres db connection
-	conn := db.CreateConnection()
-
-	// close the db connection
-	defer conn.Close(context.Background())
-
 	uuid := mux.Vars(req)["uuid"]
 
 	var task models.Task
 	err := json.NewDecoder(req.Body).Decode(&task)
     if err != nil {
+		lr.Error(err)
         http.Error(w, err.Error(), http.StatusBadRequest)
         return
 	}
 
 	task.UUID = uuid
 
-	err = db.UpdateProduct(conn, &task)
+	err = db.UpdateTask(&task)
+	lr.Info("Update task:", task)
 	if err != nil {
+		lr.Error(err)
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
 
+	// w.WriteHeader(http.StatusOK)
 	err = json.NewEncoder(w).Encode(task)
 	if err != nil {
+		lr.Error(err)
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
@@ -108,70 +153,47 @@ func CreateTaskHandler(w http.ResponseWriter, req *http.Request) {
 	var task models.Task
 	err := json.NewDecoder(req.Body).Decode(&task)
     if err != nil {
+		lr.Error(err)
         http.Error(w, err.Error(), http.StatusBadRequest)
         return
 	}
 
-	conn := db.CreateConnection()
+	err = db.CreateTask(&task)
 
-	defer conn.Close(context.Background())
-
-	err = db.CreateTask(conn, &task)
-
+	lr.Info("Get task from DB:", task.UUID)
 	if err != nil {
+		lr.Error(err)
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
 
+	w.WriteHeader(http.StatusCreated)
 	err = json.NewEncoder(w).Encode(task)
 
 	if err != nil {
+		lr.Error(err)
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
 }
 
-func GetTaskHandler(w http.ResponseWriter, req *http.Request) {
+func DeleteTaskHandler(w http.ResponseWriter, req *http.Request) {
 	uuid := mux.Vars(req)["uuid"]
 
-	conn := db.CreateConnection()
-
-	defer conn.Close(context.Background())
-
-	var task models.Task
-	err := db.GetTask(conn, uuid, &task)
+	err := db.DeleteTask(uuid)
 	if err != nil {
+		lr.Error(err)
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
 
-	err = json.NewEncoder(w).Encode(task)
+	lr.Info("Delete task from DB:", uuid)
+
 	if err != nil {
+		lr.Error(err)
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
-}
 
-func GetTasksHandler(w http.ResponseWriter, req *http.Request) {
-	conn := db.CreateConnection()
-
-	defer conn.Close(context.Background())
-	tasks, err := db.GetTasks(conn)
-
-	type Answer struct {
-		Tasks	[]models.Task
-	}
-
-	var an Answer
-
-	an.Tasks = tasks
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusBadRequest)
-		return
-	}
-	err = json.NewEncoder(w).Encode(an)
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusBadRequest)
-		return
-	}
+	w.WriteHeader(http.StatusNoContent)
 }

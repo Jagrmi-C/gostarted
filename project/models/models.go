@@ -1,8 +1,6 @@
 package models
 
-// import (
-// 	"time"
-// )
+import "time"
 
 // User schema of the user table
 type User struct {
@@ -17,6 +15,23 @@ type Task struct {
 	UUID      string 	`json:"uuid"`
 	Title     string 	`json:"title"`
 	GroupUUID string 	`json:"group_uuid"`
+}
+
+// Structure for create slice with groups
+type TasksStruct struct {
+    Task	[]Task
+}
+
+// Group shema of the groups table
+type Group struct {
+	UUID        string 	    `json:"uuid"`
+	Title       string 	    `json:"title"`
+	DT          time.Time 	`json:"dt"`
+}
+
+// Structure for create slice with groups
+type GroupsStruct struct {
+    Groups	[]Group
 }
 
 func CreateTask(title string) *Task {

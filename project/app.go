@@ -5,12 +5,34 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"os/user"
+
+	lr "github.com/sirupsen/logrus"
 
 	"github.com/Jagrmi-C/gostarted/project/db"
 	"github.com/Jagrmi-C/gostarted/project/helpers"
 	"github.com/Jagrmi-C/gostarted/project/router"
 	"github.com/spf13/viper"
+
+	"github.com/Jagrmi-C/gostarted/project/logger"
 )
+
+func init()  {
+	logger.LoggerInitialization()
+}
+
+func startJobServer() {
+	user, err := user.Current()
+    if err != nil {
+		lr.Error(err)
+    }
+	lr.WithFields(lr.Fields{
+		"server":	viper.GetString("server"),
+		"DBHost":	os.Getenv("DATABASE_URL"),
+		"user":		user.Uid,
+		"package":	"main",
+	}).Info("Server start yours job")
+}
 
 func readConfigFile() (error) {
 	viper.SetConfigType("json")
@@ -21,27 +43,13 @@ func readConfigFile() (error) {
 	return err
 }
 
-type handler struct {
-}
-
-// type App struct {
-// 	Router *mux.Router
-// 	DB     *pgx.Conn
-// 	Logger *log.Logger
-// }
-
-func (h *handler) ServeHTTP(w http.ResponseWriter, req *http.Request) {
-	res, _ := w.Write([]byte("Hello world!\n"))
-	fmt.Println(res)
-}
-
 func main()  {
 	err := readConfigFile()
 	if err != nil {
-		log.Fatal("!", err)
+		lr.Error(err)
 	}
 
-	fmt.Println(viper.GetString("test"))
+	startJobServer()
 
 	PORT := ":8888"
 	arguments := os.Args
@@ -53,7 +61,7 @@ func main()  {
 
 	app := helpers.App{}
 
-	db.CheckDb()
+	db.CreateConnection()
 
 	router := router.Router()
 	app.Router = router
