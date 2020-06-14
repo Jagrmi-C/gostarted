@@ -34,6 +34,13 @@ type GroupsStruct struct {
     Groups	[]Group
 }
 
+type TimeFrame struct {
+	UUID        string 	    `json:"uuid"`
+	TaskUUID    string 	    `json:"task_uuid"`
+    FROM        time.Time 	`json:"from"`
+    TO          time.Time 	`json:"to"`
+}
+
 func CreateTask(title string) *Task {
 	exampleUUID := "5f3292fd-3238-444e-96d2-ee313d140166"
     return &Task{exampleUUID, title, exampleUUID}  // enforce the default value here

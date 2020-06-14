@@ -32,7 +32,9 @@ func Router() *mux.Router {
 	router.HandleFunc("/groups/{uuid}", handlers.UpdateGroupHandler).Methods(http.MethodPut)
 	router.HandleFunc("/groups/{uuid}", handlers.DeleteGroupHandler).Methods(http.MethodDelete)
 
-	router.HandleFunc("/timeframes/", handlers.Default).Methods(http.MethodPost)
+	router.HandleFunc("/timeframes/", handlers.CreateTimeframeHandler).Methods(http.MethodPost)
+	router.HandleFunc("/timeframes/{uuid}", handlers.GetTimeframeHandler).Methods(http.MethodGet)
+	router.HandleFunc("/timeframes/{uuid}", handlers.DeleteTimeframeHandler).Methods(http.MethodDelete)
 
     return router
 }

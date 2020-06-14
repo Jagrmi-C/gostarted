@@ -27,6 +27,10 @@ const (
 	CreateGroupQuery = "INSERT INTO groups(title, group_uuid, dt) VALUES($1, $2, $3) RETURNING uuid"
 	UpdateGroupQuery = "UPDATE tasks SET title=$1,dt=$2 WHERE uuid=$3"
 	DeleteGroupQuery = "DELETE FROM groups WHERE uuid=$1"
+
+	GetTimeFrameQuery = "SELECT * FROM timeframes WHERE uuid=$1"
+	CreateTimeFrameQuery = "INSERT INTO timeframes(task_uuid, dtfrom, dtto) VALUES($1, $2, $3) RETURNING uuid"
+	DeleteTimeFrameQuery = "DELETE FROM timeframes WHERE uuid=$1"
 )
 
 func init()  {
@@ -223,6 +227,48 @@ func DeleteGroup(uuid string) error {
 	_, err := conn.Exec(
 		context.Background(),
 		DeleteGroupQuery,
+		uuid,
+	)
+	return err
+}
+
+func GetTimeFrame(uuid string, tf *models.TimeFrame) error {
+	conn := CreateConnection()
+
+	defer conn.Close(context.Background())
+
+	err := conn.QueryRow(
+		context.Background(),
+		GetTimeFrameQuery,
+		uuid,
+	).Scan(&tf.UUID, &tf.FROM, &tf.TO)
+
+	return err
+}
+
+func CreateTimeFrame(tf *models.TimeFrame) error {
+	conn := CreateConnection()
+
+	defer conn.Close(context.Background())
+
+	err := conn.QueryRow(
+		context.Background(),
+		CreateTimeFrameQuery,
+		tf.TaskUUID,
+		tf.FROM,
+		tf.TO,
+	).Scan(&tf.UUID)
+	return err
+}
+
+func DeleteTimeFrame(uuid string) error {
+	conn := CreateConnection()
+
+	defer conn.Close(context.Background())
+
+	_, err := conn.Exec(
+		context.Background(),
+		DeleteTimeFrameQuery,
 		uuid,
 	)
 	return err
