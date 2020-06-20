@@ -36,5 +36,6 @@ func Router() *mux.Router {
 	router.HandleFunc("/timeframes/{uuid}", handlers.GetTimeframeHandler).Methods(http.MethodGet)
 	router.HandleFunc("/timeframes/{uuid}", handlers.DeleteTimeframeHandler).Methods(http.MethodDelete)
 
+	router.HandleFunc("/tasksgo/", handlers.GetGoTasksHandler).Methods(http.MethodGet)
     return router
 }

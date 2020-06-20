@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"encoding/json"
+	"fmt"
 	"net/http"
 
 	"github.com/gorilla/mux"
@@ -21,7 +22,7 @@ func init()  {
 func GetGroupHandler(w http.ResponseWriter, req *http.Request) {
 	uuid := mux.Vars(req)["uuid"]
 
-	var group models.Group
+	var group models.GroupInformation
 	err := db.GetGroup(uuid, &group)
 	if err != nil {
 		lr.Error(err)
@@ -40,17 +41,15 @@ func GetGroupHandler(w http.ResponseWriter, req *http.Request) {
 }
 
 func GetGroupsHandler(w http.ResponseWriter, req *http.Request) {
-	groups, err := db.GetGroups()
+	var groupInformation []models.GroupInformation
+	err := db.GetGroups(&groupInformation)
 
-	var bodyStruct models.GroupsStruct
-
-	bodyStruct.Groups = groups
 	if err != nil {
 		lr.Error(err)
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
-	err = json.NewEncoder(w).Encode(bodyStruct)
+	err = json.NewEncoder(w).Encode(groupInformation)
 	if err != nil {
 		lr.Error(err)
 		http.Error(w, err.Error(), http.StatusBadRequest)
@@ -96,14 +95,16 @@ func CreateGroupHandler(w http.ResponseWriter, req *http.Request) {
         return
 	}
 
+	group.DT = helpers.GetCurrentLocalTime()
+	fmt.Println("TEST")
 	err = db.CreateGroup(&group)
-	lr.Info("Create group:", group)
-
 	if err != nil {
 		lr.Error(err)
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
+
+	lr.Info("Create group:", group)
 
 	w.WriteHeader(http.StatusCreated)
 	err = json.NewEncoder(w).Encode(group)

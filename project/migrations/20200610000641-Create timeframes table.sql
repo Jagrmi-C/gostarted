@@ -2,7 +2,7 @@
 -- +migrate Up
 CREATE TABLE timeframes (
     uuid UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    task_uuid UUID REFERENCES tasks(uuid),
+    task_uuid UUID REFERENCES tasks(uuid) on update cascade on delete cascade,
     dtfrom timestamptz,
     dtto timestamptz
 );

@@ -45,3 +45,25 @@ func CreateTask(title string) *Task {
 	exampleUUID := "5f3292fd-3238-444e-96d2-ee313d140166"
     return &Task{exampleUUID, title, exampleUUID}  // enforce the default value here
 }
+
+type InformationAboutTask struct {
+	Tasks []Task
+}
+
+type TaskTimeFrame struct {
+	FROM        time.Time 	`json:"from"`
+    TO          time.Time 	`json:"to"`
+}
+type TaskInformation struct {
+	UUID      	string 			`json:"uuid"`
+	Title     	string 			`json:"title"`
+	GroupUUID 	string 			`json:"group_uuid"`
+	TimeFrames	[]TaskTimeFrame	`json:"time_frames"`
+}
+
+type GroupInformation struct {
+	UUID        string 	    `json:"uuid"`
+	Title       string 	    `json:"title"`
+	// DT          time.Time 	`json:"dt"`
+	Tasks		[]Task		`json:"tasks"`
+}
