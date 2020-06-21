@@ -1,7 +1,0 @@
-{
-    "test": "value",
-    "server": "test",
-    "writeLog": "file",
-    "fileLogName": "loginfo",
-    "port": "8888"
-}

@@ -7,7 +7,7 @@ import (
 	"os/user"
 
 	lr "github.com/sirupsen/logrus"
-	"github.com/spf13/viper"
+	"github.com/joho/godotenv"
 
 	"github.com/Jagrmi-C/gostarted/project/logger"
 	"github.com/Jagrmi-C/gostarted/project/router"
@@ -18,31 +18,24 @@ func init()  {
 }
 
 func startJobServer() {
+	if os.Getenv("writeLog") == "file" {
+		writeLogFile()
+	}
+
 	user, err := user.Current()
     if err != nil {
 		lr.Error(err)
     }
 	lr.WithFields(lr.Fields{
-		"server":	viper.GetString("server"),
+		"server":	os.Getenv("server"),
 		"DBHost":	os.Getenv("DATABASE_URL"),
 		"user":		user.Uid,
 		"package":	"main",
 	}).Info("Server start yours job")
 }
 
-func readConfigFile() (error) {
-	viper.SetConfigType("json")
-	viper.SetConfigFile("project/config/config.json")
-	lr.Info(fmt.Sprintf("Using config: %s\n", viper.ConfigFileUsed()))
-	err := viper.ReadInConfig()
-	if viper.GetString("writeLog") == "file" {
-		writeLogFile()
-	}
-	return err
-}
-
 func getLogNameFile() (filename string) {
-	filename = viper.GetString("fileLogName")
+	filename = os.Getenv("fileLogName")
 	if filename != "" {
 		filename += ".log"
 	} else {
@@ -64,9 +57,9 @@ func writeLogFile()  {
 }
 
 func main()  {
-	err := readConfigFile()
+	err := godotenv.Load()
 	if err != nil {
-		lr.Error(err)
+		lr.Error("Error loading .env file")
 	}
 
 	startJobServer()
@@ -74,7 +67,7 @@ func main()  {
 	var PORT string
 	arguments := os.Args
 	if len(arguments) == 1 {
-		PORT = fmt.Sprintf(":%s", viper.GetString("port"))
+		PORT = fmt.Sprintf(":%s", os.Getenv("port"))
 		fmt.Println("Using default port number: ", PORT)
 	} else {
 		PORT = ":" + arguments[1]

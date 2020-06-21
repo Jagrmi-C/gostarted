@@ -7,6 +7,7 @@ require (
 	github.com/gorilla/mux v1.7.4
 	github.com/jackc/pgx v3.6.2+incompatible
 	github.com/jackc/pgx/v4 v4.6.0
+	github.com/joho/godotenv v1.3.0
 	github.com/kyokomi/emoji v2.2.4+incompatible
 	github.com/lib/pq v1.7.0
 	github.com/rubenv/sql-migrate v0.0.0-20200429072036-ae26b214fa43 // indirect
