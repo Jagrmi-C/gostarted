@@ -2,7 +2,7 @@
 Application for registration, receipt, updates tasks timedatas
 
 ## Action before start
-1. Copy "config.json.default" as "config.json" and edit values
+1. Copy "env.default" as ".env" and edit values, add another values
 2. Run "docker-compose build"
 3. Attach to container "api" and run "sql-migrate up -env='production'" to start the migration process
 4. Start application "docker-compose up api"

@@ -12,10 +12,9 @@ import (
 	"github.com/Jagrmi-C/gostarted/project/models"
 )
 
-func init()  {
+func init() {
 	logger.LoggerInitialization()
 }
-
 
 func GetTimeframeHandler(w http.ResponseWriter, req *http.Request) {
 	uuid := mux.Vars(req)["uuid"]
@@ -41,10 +40,10 @@ func GetTimeframeHandler(w http.ResponseWriter, req *http.Request) {
 func CreateTimeframeHandler(w http.ResponseWriter, req *http.Request) {
 	var timeframe models.TimeFrame
 	err := json.NewDecoder(req.Body).Decode(&timeframe)
-    if err != nil {
+	if err != nil {
 		lr.Error(err)
-        http.Error(w, err.Error(), http.StatusBadRequest)
-        return
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
 	}
 
 	err = db.CreateTimeFrame(&timeframe)

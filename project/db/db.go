@@ -12,30 +12,29 @@ import (
 	"github.com/Jagrmi-C/gostarted/project/models"
 )
 
-
 const (
-	GetTaskQuery    = "SELECT uuid, title FROM tasks WHERE uuid=$1"
+	GetTaskQuery = "SELECT uuid, title FROM tasks WHERE uuid=$1"
 	// GetTasksQuery   = "SELECT uuid, title, dt FROM tasks LIMIT $1 OFFSET $2"
-	GetTasksQuery   = "SELECT uuid, title FROM tasks"
-	GetTasksQueryByGroup   = "SELECT uuid, title FROM tasks where group_uuid=$1"
-	UpdateTaskQuery = "UPDATE tasks SET title=$1,group_uuid=$2 WHERE uuid=$3"
-	DeleteTaskQuery = "DELETE FROM tasks WHERE uuid=$1"
-	CreateTaskQuery = "INSERT INTO tasks(title, group_uuid) VALUES($1, $2) RETURNING uuid"
-	
-	GetGroupQuery = "SELECT uuid, title FROM groups WHERE uuid=$1"
-	GetGroupsQuery = "SELECT uuid, title FROM groups"
+	GetTasksQuery        = "SELECT uuid, title FROM tasks"
+	GetTasksQueryByGroup = "SELECT uuid, title FROM tasks where group_uuid=$1"
+	UpdateTaskQuery      = "UPDATE tasks SET title=$1,group_uuid=$2 WHERE uuid=$3"
+	DeleteTaskQuery      = "DELETE FROM tasks WHERE uuid=$1"
+	CreateTaskQuery      = "INSERT INTO tasks(title, group_uuid) VALUES($1, $2) RETURNING uuid"
+
+	GetGroupQuery    = "SELECT uuid, title FROM groups WHERE uuid=$1"
+	GetGroupsQuery   = "SELECT uuid, title FROM groups"
 	CreateGroupQuery = "INSERT INTO groups(title, dt) VALUES($1, $2) RETURNING uuid"
 	UpdateGroupQuery = "UPDATE groups SET title=$1,dt=$2 WHERE uuid=$3"
 	DeleteGroupQuery = "DELETE FROM groups WHERE uuid=$1"
 
-	GetTimeFrameQuery = "SELECT * FROM timeframes WHERE uuid=$1"
+	GetTimeFrameQuery    = "SELECT * FROM timeframes WHERE uuid=$1"
 	CreateTimeFrameQuery = "INSERT INTO timeframes(task_uuid, dtfrom, dtto) VALUES($1, $2, $3) RETURNING uuid"
 	DeleteTimeFrameQuery = "DELETE FROM timeframes WHERE uuid=$1"
 
 	GetTimeFramesQuery = "SELECT dtfrom, dtto FROM timeframes WHERE task_uuid=$1"
 )
 
-func init()  {
+func init() {
 	logger.LoggerInitialization()
 }
 
@@ -76,7 +75,7 @@ func GetTasks(uuid string, t *[]models.Task) error {
 
 	for rows.Next() {
 		var task models.Task
-		err := rows.Scan(&task.UUID, &task.Title,)
+		err := rows.Scan(&task.UUID, &task.Title)
 		if err != nil {
 			return err
 		}
@@ -119,7 +118,7 @@ func GetTasksInfo(t *[]models.TaskInformation) error {
 
 	for rows.Next() {
 		var task models.TaskInformation
-		err := rows.Scan(&task.UUID, &task.Title,)
+		err := rows.Scan(&task.UUID, &task.Title)
 		if err != nil {
 			return err
 		}
@@ -163,12 +162,12 @@ func CreateTask(t *models.Task) error {
 	}
 
 	defer func() {
-        if err != nil {
+		if err != nil {
 			_ = tx.Rollback(context.Background())
-            return
-        }
-        err = tx.Commit(context.Background())
-    }()
+			return
+		}
+		err = tx.Commit(context.Background())
+	}()
 
 	err = tx.QueryRow(
 		context.Background(),
@@ -196,12 +195,12 @@ func DeleteTask(uuid string) error {
 	}
 
 	defer func() {
-        if err != nil {
+		if err != nil {
 			_ = tx.Rollback(context.Background())
-            return
-        }
-        err = tx.Commit(context.Background())
-    }()
+			return
+		}
+		err = tx.Commit(context.Background())
+	}()
 
 	_, err = tx.Exec(
 		context.Background(),
@@ -251,7 +250,7 @@ func GetGroups(gr *[]models.GroupInformation) error {
 
 	for rows.Next() {
 		var group models.GroupInformation
-		err := rows.Scan(&group.UUID, &group.Title,)
+		err := rows.Scan(&group.UUID, &group.Title)
 		if err != nil {
 			return err
 		}
@@ -280,12 +279,12 @@ func CreateGroup(gr *models.Group) error {
 	}
 
 	defer func() {
-        if err != nil {
+		if err != nil {
 			_ = tx.Rollback(context.Background())
-            return
-        }
-        err = tx.Commit(context.Background())
-    }()
+			return
+		}
+		err = tx.Commit(context.Background())
+	}()
 
 	err = tx.QueryRow(
 		context.Background(),
@@ -308,12 +307,12 @@ func UpdateGroup(gr *models.Group) error {
 	}
 
 	defer func() {
-        if err != nil {
+		if err != nil {
 			_ = tx.Rollback(context.Background())
-            return
-        }
-        err = tx.Commit(context.Background())
-    }()
+			return
+		}
+		err = tx.Commit(context.Background())
+	}()
 
 	_, err = tx.Exec(
 		context.Background(),
@@ -337,12 +336,12 @@ func DeleteGroup(uuid string) error {
 	}
 
 	defer func() {
-        if err != nil {
+		if err != nil {
 			_ = tx.Rollback(context.Background())
-            return
-        }
-        err = tx.Commit(context.Background())
-    }()
+			return
+		}
+		err = tx.Commit(context.Background())
+	}()
 
 	_, err = tx.Exec(
 		context.Background(),
@@ -378,12 +377,12 @@ func CreateTimeFrame(tf *models.TimeFrame) error {
 	}
 
 	defer func() {
-        if err != nil {
+		if err != nil {
 			_ = tx.Rollback(context.Background())
-            return
-        }
-        err = tx.Commit(context.Background())
-    }()
+			return
+		}
+		err = tx.Commit(context.Background())
+	}()
 
 	err = tx.QueryRow(
 		context.Background(),
@@ -407,12 +406,12 @@ func DeleteTimeFrame(uuid string) error {
 	}
 
 	defer func() {
-        if err != nil {
+		if err != nil {
 			_ = tx.Rollback(context.Background())
-            return
-        }
-        err = tx.Commit(context.Background())
-    }()
+			return
+		}
+		err = tx.Commit(context.Background())
+	}()
 
 	_, err = tx.Exec(
 		context.Background(),
@@ -439,7 +438,7 @@ func GetTimeFramesByTask(taskUUID string, ttms *[]models.TaskTimeFrame) error {
 
 	for rows.Next() {
 		var ttm models.TaskTimeFrame
-		err := rows.Scan(&ttm.FROM, &ttm.TO,)
+		err := rows.Scan(&ttm.FROM, &ttm.TO)
 		if err != nil {
 			lr.Error(err)
 			return err
@@ -460,7 +459,7 @@ func GetGoTasks(output chan []models.TaskInformation) {
 
 	for rows.Next() {
 		var task models.TaskInformation
-		err := rows.Scan(&task.UUID, &task.Title,)
+		err := rows.Scan(&task.UUID, &task.Title)
 		if err != nil {
 			fmt.Println(err)
 		}

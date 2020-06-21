@@ -6,14 +6,14 @@ import (
 	"os"
 	"os/user"
 
-	lr "github.com/sirupsen/logrus"
 	"github.com/joho/godotenv"
+	lr "github.com/sirupsen/logrus"
 
 	"github.com/Jagrmi-C/gostarted/project/logger"
 	"github.com/Jagrmi-C/gostarted/project/router"
 )
 
-func init()  {
+func init() {
 	logger.LoggerInitialization()
 }
 
@@ -23,14 +23,14 @@ func startJobServer() {
 	}
 
 	user, err := user.Current()
-    if err != nil {
+	if err != nil {
 		lr.Error(err)
-    }
+	}
 	lr.WithFields(lr.Fields{
-		"server":	os.Getenv("server"),
-		"DBHost":	os.Getenv("DATABASE_URL"),
-		"user":		user.Uid,
-		"package":	"main",
+		"server":  os.Getenv("server"),
+		"DBHost":  os.Getenv("DATABASE_URL"),
+		"user":    user.Uid,
+		"package": "main",
 	}).Info("Server start yours job")
 }
 
@@ -44,19 +44,19 @@ func getLogNameFile() (filename string) {
 	return filename
 }
 
-func writeLogFile()  {
+func writeLogFile() {
 	filename := getLogNameFile()
 	file, err := os.OpenFile(filename, os.O_CREATE|os.O_WRONLY, 0666)
-    if err == nil {
-        lr.SetOutput(file)
-        lr.SetLevel(lr.InfoLevel)
-    } else {
-        lr.Info("Failed to log to file, using default stderr")
-    }
-	
+	if err == nil {
+		lr.SetOutput(file)
+		lr.SetLevel(lr.InfoLevel)
+	} else {
+		lr.Info("Failed to log to file, using default stderr")
+	}
+
 }
 
-func main()  {
+func main() {
 	err := godotenv.Load()
 	if err != nil {
 		lr.Error("Error loading .env file")

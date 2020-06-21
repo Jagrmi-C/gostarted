@@ -13,10 +13,9 @@ import (
 	"github.com/Jagrmi-C/gostarted/project/models"
 )
 
-func init()  {
+func init() {
 	logger.LoggerInitialization()
 }
-
 
 func GetGroupHandler(w http.ResponseWriter, req *http.Request) {
 	uuid := mux.Vars(req)["uuid"]
@@ -59,9 +58,9 @@ func GetGroupsHandler(w http.ResponseWriter, req *http.Request) {
 func CreateGroupHandler(w http.ResponseWriter, req *http.Request) {
 	var group models.Group
 	err := json.NewDecoder(req.Body).Decode(&group)
-    if err != nil {
-        http.Error(w, err.Error(), http.StatusBadRequest)
-        return
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
 	}
 
 	group.DT = helpers.GetCurrentLocalTime()
@@ -89,10 +88,10 @@ func UpdateGroupHandler(w http.ResponseWriter, req *http.Request) {
 
 	var group models.Group
 	err := json.NewDecoder(req.Body).Decode(&group)
-    if err != nil {
+	if err != nil {
 		lr.Error(err)
-        http.Error(w, err.Error(), http.StatusBadRequest)
-        return
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
 	}
 
 	group.UUID = uuid

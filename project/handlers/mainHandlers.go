@@ -9,11 +9,11 @@ import (
 	lr "github.com/sirupsen/logrus"
 
 	"github.com/Jagrmi-C/gostarted/project/db"
-	"github.com/Jagrmi-C/gostarted/project/models"
 	"github.com/Jagrmi-C/gostarted/project/logger"
+	"github.com/Jagrmi-C/gostarted/project/models"
 )
 
-func init()  {
+func init() {
 	logger.LoggerInitialization()
 }
 
@@ -27,7 +27,6 @@ func Default(w http.ResponseWriter, req *http.Request) {
 func DefaultTest(w http.ResponseWriter, req *http.Request) {
 	fmt.Fprintf(w, "This is SPARTA!\n")
 }
-
 
 func GetGoTasksHandler(w http.ResponseWriter, req *http.Request) {
 	output := make(chan []models.TaskInformation)

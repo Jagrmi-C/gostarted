@@ -12,7 +12,7 @@ import (
 	"github.com/Jagrmi-C/gostarted/project/models"
 )
 
-func init()  {
+func init() {
 	logger.LoggerInitialization()
 }
 
@@ -58,10 +58,10 @@ func GetTasksHandler(w http.ResponseWriter, req *http.Request) {
 func CreateTaskHandler(w http.ResponseWriter, req *http.Request) {
 	var task models.Task
 	err := json.NewDecoder(req.Body).Decode(&task)
-    if err != nil {
+	if err != nil {
 		lr.Error(err)
-        http.Error(w, err.Error(), http.StatusBadRequest)
-        return
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
 	}
 
 	err = db.CreateTask(&task)
@@ -88,10 +88,10 @@ func UpdateTaskHandler(w http.ResponseWriter, req *http.Request) {
 
 	var task models.Task
 	err := json.NewDecoder(req.Body).Decode(&task)
-    if err != nil {
+	if err != nil {
 		lr.Error(err)
-        http.Error(w, err.Error(), http.StatusBadRequest)
-        return
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
 	}
 
 	task.UUID = uuid
