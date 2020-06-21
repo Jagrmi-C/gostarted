@@ -4,7 +4,6 @@ import (
 	"context"
 	"fmt"
 	"os"
-	// "sync"
 
 	"github.com/jackc/pgx/v4"
 	lr "github.com/sirupsen/logrus"
@@ -20,8 +19,6 @@ const (
 	GetTasksQuery   = "SELECT uuid, title FROM tasks"
 	GetTasksQueryByGroup   = "SELECT uuid, title FROM tasks where group_uuid=$1"
 	UpdateTaskQuery = "UPDATE tasks SET title=$1,group_uuid=$2 WHERE uuid=$3"
-	// UpdateTaskQueryIfTitle = "UPDATE tasks SET title=$1 WHERE uuid=$2"
-	// UpdateTaskQueryIfGroup = "UPDATE tasks SET group_uuid=$1 WHERE uuid=$2"
 	DeleteTaskQuery = "DELETE FROM tasks WHERE uuid=$1"
 	CreateTaskQuery = "INSERT INTO tasks(title, group_uuid) VALUES($1, $2) RETURNING uuid"
 	
@@ -74,7 +71,6 @@ func GetTasks(uuid string, t *[]models.Task) error {
 	rows, err := conn.Query(context.Background(), GetTasksQueryByGroup, uuid)
 
 	if err != nil {
-		fmt.Println("124")
 		return err
 	}
 
@@ -193,7 +189,21 @@ func DeleteTask(uuid string) error {
 
 	defer conn.Close(context.Background())
 
-	_, err := conn.Exec(
+	tx, err := conn.Begin(context.Background())
+	if err != nil {
+		lr.Error(err)
+		return err
+	}
+
+	defer func() {
+        if err != nil {
+			_ = tx.Rollback(context.Background())
+            return
+        }
+        err = tx.Commit(context.Background())
+    }()
+
+	_, err = tx.Exec(
 		context.Background(),
 		DeleteTaskQuery,
 		uuid,
@@ -305,7 +315,7 @@ func UpdateGroup(gr *models.Group) error {
         err = tx.Commit(context.Background())
     }()
 
-	_, err = conn.Exec(
+	_, err = tx.Exec(
 		context.Background(),
 		UpdateGroupQuery,
 		gr.Title,
@@ -320,7 +330,21 @@ func DeleteGroup(uuid string) error {
 
 	defer conn.Close(context.Background())
 
-	_, err := conn.Exec(
+	tx, err := conn.Begin(context.Background())
+	if err != nil {
+		lr.Error(err)
+		return err
+	}
+
+	defer func() {
+        if err != nil {
+			_ = tx.Rollback(context.Background())
+            return
+        }
+        err = tx.Commit(context.Background())
+    }()
+
+	_, err = tx.Exec(
 		context.Background(),
 		DeleteGroupQuery,
 		uuid,

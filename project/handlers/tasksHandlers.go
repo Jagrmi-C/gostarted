@@ -2,7 +2,6 @@ package handlers
 
 import (
 	"encoding/json"
-	"fmt"
 	"net/http"
 
 	"github.com/gorilla/mux"
@@ -56,6 +55,34 @@ func GetTasksHandler(w http.ResponseWriter, req *http.Request) {
 	}
 }
 
+func CreateTaskHandler(w http.ResponseWriter, req *http.Request) {
+	var task models.Task
+	err := json.NewDecoder(req.Body).Decode(&task)
+    if err != nil {
+		lr.Error(err)
+        http.Error(w, err.Error(), http.StatusBadRequest)
+        return
+	}
+
+	err = db.CreateTask(&task)
+
+	lr.Info("Get task from DB:", task.UUID)
+	if err != nil {
+		lr.Error(err)
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+
+	w.WriteHeader(http.StatusCreated)
+	err = json.NewEncoder(w).Encode(task)
+
+	if err != nil {
+		lr.Error(err)
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+}
+
 func UpdateTaskHandler(w http.ResponseWriter, req *http.Request) {
 	uuid := mux.Vars(req)["uuid"]
 
@@ -86,42 +113,6 @@ func UpdateTaskHandler(w http.ResponseWriter, req *http.Request) {
 	}
 }
 
-func Default(w http.ResponseWriter, req *http.Request) {
-	fmt.Fprintf(w, "Ok! This is an example HTTPS server!\n")
-}
-
-func DefaultTest(w http.ResponseWriter, req *http.Request) {
-	fmt.Fprintf(w, "This is SPARTA!\n")
-}
-
-func CreateTaskHandler(w http.ResponseWriter, req *http.Request) {
-	var task models.Task
-	err := json.NewDecoder(req.Body).Decode(&task)
-    if err != nil {
-		lr.Error(err)
-        http.Error(w, err.Error(), http.StatusBadRequest)
-        return
-	}
-
-	err = db.CreateTask(&task)
-
-	lr.Info("Get task from DB:", task.UUID)
-	if err != nil {
-		lr.Error(err)
-		http.Error(w, err.Error(), http.StatusBadRequest)
-		return
-	}
-
-	w.WriteHeader(http.StatusCreated)
-	err = json.NewEncoder(w).Encode(task)
-
-	if err != nil {
-		lr.Error(err)
-		http.Error(w, err.Error(), http.StatusBadRequest)
-		return
-	}
-}
-
 func DeleteTaskHandler(w http.ResponseWriter, req *http.Request) {
 	uuid := mux.Vars(req)["uuid"]
 
@@ -141,32 +132,4 @@ func DeleteTaskHandler(w http.ResponseWriter, req *http.Request) {
 	}
 
 	w.WriteHeader(http.StatusNoContent)
-}
-
-func GetGoTasksHandler(w http.ResponseWriter, req *http.Request) {
-	output := make(chan []models.TaskInformation)
-
-	go db.GetGoTasks(output)
-	lr.Info("Get all tasksGO from DB")
-
-	err := json.NewEncoder(w).Encode(<-output)
-	if err != nil {
-		lr.Error(err)
-		http.Error(w, err.Error(), http.StatusBadRequest)
-		return
-	}
-}
-
-func GetGoTaskHandler(w http.ResponseWriter, req *http.Request) {
-	output := make(chan []models.TaskInformation)
-
-	go db.GetGoTasks(output)
-	lr.Info("Get all tasksGO from DB")
-
-	err := json.NewEncoder(w).Encode(<-output)
-	if err != nil {
-		lr.Error(err)
-		http.Error(w, err.Error(), http.StatusBadRequest)
-		return
-	}
 }

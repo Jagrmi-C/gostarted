@@ -57,6 +57,35 @@ func GetGroupsHandler(w http.ResponseWriter, req *http.Request) {
 	}
 }
 
+func CreateGroupHandler(w http.ResponseWriter, req *http.Request) {
+	var group models.Group
+	err := json.NewDecoder(req.Body).Decode(&group)
+    if err != nil {
+        http.Error(w, err.Error(), http.StatusBadRequest)
+        return
+	}
+
+	group.DT = helpers.GetCurrentLocalTime()
+	fmt.Println("TEST")
+	err = db.CreateGroup(&group)
+	if err != nil {
+		lr.Error(err)
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+
+	lr.Info("Create group:", group)
+
+	w.WriteHeader(http.StatusCreated)
+	err = json.NewEncoder(w).Encode(group)
+
+	if err != nil {
+		lr.Error(err)
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+}
+
 func UpdateGroupHandler(w http.ResponseWriter, req *http.Request) {
 	uuid := mux.Vars(req)["uuid"]
 
@@ -80,35 +109,6 @@ func UpdateGroupHandler(w http.ResponseWriter, req *http.Request) {
 	}
 
 	err = json.NewEncoder(w).Encode(group)
-	if err != nil {
-		lr.Error(err)
-		http.Error(w, err.Error(), http.StatusBadRequest)
-		return
-	}
-}
-
-func CreateGroupHandler(w http.ResponseWriter, req *http.Request) {
-	var group models.Group
-	err := json.NewDecoder(req.Body).Decode(&group)
-    if err != nil {
-        http.Error(w, err.Error(), http.StatusBadRequest)
-        return
-	}
-
-	group.DT = helpers.GetCurrentLocalTime()
-	fmt.Println("TEST")
-	err = db.CreateGroup(&group)
-	if err != nil {
-		lr.Error(err)
-		http.Error(w, err.Error(), http.StatusBadRequest)
-		return
-	}
-
-	lr.Info("Create group:", group)
-
-	w.WriteHeader(http.StatusCreated)
-	err = json.NewEncoder(w).Encode(group)
-
 	if err != nil {
 		lr.Error(err)
 		http.Error(w, err.Error(), http.StatusBadRequest)
