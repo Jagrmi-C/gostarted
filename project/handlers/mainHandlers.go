@@ -51,8 +51,8 @@ func GetGoTaskHandler(w http.ResponseWriter, req *http.Request) {
 	go db.GetGoTask(uuid, taskChan)
 	go db.GetGoTimeFramesByTask(uuid, timeFrameChan)
 
-	taskInfo := <- taskChan
-	taskInfo.TimeFrames = <- timeFrameChan
+	taskInfo := <-taskChan
+	taskInfo.TimeFrames = <-timeFrameChan
 
 	lr.Info("Get all tasks use goroutines from DB")
 

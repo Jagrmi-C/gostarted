@@ -474,7 +474,6 @@ func GetGoTasks(output chan []models.TaskInformation) {
 	output <- tasks
 }
 
-
 func GetGoTask(taskUUID string, output chan models.TaskInformation) {
 	conn := CreateConnection()
 
