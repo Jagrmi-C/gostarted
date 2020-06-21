@@ -6,6 +6,7 @@ import (
 	"net/http"
 	"time"
 
+	"github.com/gorilla/mux"
 	lr "github.com/sirupsen/logrus"
 
 	"github.com/Jagrmi-C/gostarted/project/db"
@@ -43,12 +44,19 @@ func GetGoTasksHandler(w http.ResponseWriter, req *http.Request) {
 }
 
 func GetGoTaskHandler(w http.ResponseWriter, req *http.Request) {
-	output := make(chan []models.TaskInformation)
+	uuid := mux.Vars(req)["uuid"]
+	taskChan := make(chan models.TaskInformation)
+	timeFrameChan := make(chan []models.TaskTimeFrame)
 
-	go db.GetGoTasks(output)
-	lr.Info("Get all tasksGO from DB")
+	go db.GetGoTask(uuid, taskChan)
+	go db.GetGoTimeFramesByTask(uuid, timeFrameChan)
 
-	err := json.NewEncoder(w).Encode(<-output)
+	taskInfo := <- taskChan
+	taskInfo.TimeFrames = <- timeFrameChan
+
+	lr.Info("Get all tasks use goroutines from DB")
+
+	err := json.NewEncoder(w).Encode(taskInfo)
 	if err != nil {
 		lr.Error(err)
 		http.Error(w, err.Error(), http.StatusBadRequest)

@@ -474,15 +474,48 @@ func GetGoTasks(output chan []models.TaskInformation) {
 	output <- tasks
 }
 
-func GetGoTask(uuid string, t *models.Task) error {
+
+func GetGoTask(taskUUID string, output chan models.TaskInformation) {
 	conn := CreateConnection()
 
 	defer conn.Close(context.Background())
+	var t models.TaskInformation
+
 	err := conn.QueryRow(
 		context.Background(),
 		GetTaskQuery,
-		uuid,
+		taskUUID,
 	).Scan(&t.UUID, &t.Title)
+	if err != nil {
+		fmt.Println(err)
+		lr.Error(err)
+	}
+	output <- t
+}
 
-	return err
+func GetGoTimeFramesByTask(taskUUID string, output chan []models.TaskTimeFrame) {
+	conn := CreateConnection()
+
+	defer conn.Close(context.Background())
+
+	rows, err := conn.Query(
+		context.Background(),
+		GetTimeFramesQuery,
+		taskUUID,
+	)
+	if err != nil {
+		lr.Error(err)
+	}
+	var ttms []models.TaskTimeFrame
+
+	for rows.Next() {
+		var ttm models.TaskTimeFrame
+		err := rows.Scan(&ttm.FROM, &ttm.TO)
+		if err != nil {
+			lr.Error(err)
+		}
+		ttms = append(ttms, ttm)
+	}
+
+	output <- ttms
 }

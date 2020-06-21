@@ -17,7 +17,6 @@ services:
             - DB_PORT=${DB_PORT}
             - DB_SSLMODE=disable
             - DB_HOST=postgres-goapp
-            - DATABASE_URL1=${DATABASE_URL1}
             - DATABASE_URL=${DATABASE_URL}
 
     postgres-goapp:
