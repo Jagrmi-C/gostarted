@@ -8,8 +8,8 @@ import (
 	lr "github.com/sirupsen/logrus"
 
 	"github.com/Jagrmi-C/gostarted/project/db"
-	"github.com/Jagrmi-C/gostarted/project/models"
 	"github.com/Jagrmi-C/gostarted/project/logger"
+	"github.com/Jagrmi-C/gostarted/project/models"
 )
 
 func init()  {

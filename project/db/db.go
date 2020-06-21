@@ -371,7 +371,21 @@ func CreateTimeFrame(tf *models.TimeFrame) error {
 
 	defer conn.Close(context.Background())
 
-	err := conn.QueryRow(
+	tx, err := conn.Begin(context.Background())
+	if err != nil {
+		lr.Error(err)
+		return err
+	}
+
+	defer func() {
+        if err != nil {
+			_ = tx.Rollback(context.Background())
+            return
+        }
+        err = tx.Commit(context.Background())
+    }()
+
+	err = tx.QueryRow(
 		context.Background(),
 		CreateTimeFrameQuery,
 		tf.TaskUUID,
@@ -386,7 +400,21 @@ func DeleteTimeFrame(uuid string) error {
 
 	defer conn.Close(context.Background())
 
-	_, err := conn.Exec(
+	tx, err := conn.Begin(context.Background())
+	if err != nil {
+		lr.Error(err)
+		return err
+	}
+
+	defer func() {
+        if err != nil {
+			_ = tx.Rollback(context.Background())
+            return
+        }
+        err = tx.Commit(context.Background())
+    }()
+
+	_, err = tx.Exec(
 		context.Background(),
 		DeleteTimeFrameQuery,
 		uuid,

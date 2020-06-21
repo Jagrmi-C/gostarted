@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
+	"time"
 
 	lr "github.com/sirupsen/logrus"
 
@@ -17,6 +18,9 @@ func init()  {
 }
 
 func Default(w http.ResponseWriter, req *http.Request) {
+	testTime := time.RFC3339
+	fmt.Println(testTime)
+
 	fmt.Fprintf(w, "Ok! This is an example HTTPS server!\n")
 }
 

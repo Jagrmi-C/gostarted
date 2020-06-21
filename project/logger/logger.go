@@ -1,6 +1,7 @@
 package logger
 import (
-	"fmt"
+    "fmt"
+    // "os"
 	"runtime"
 	"strings"
 
@@ -25,9 +26,10 @@ func LoggerInitialization() {
     logrus.SetFormatter(formatter)
     // file, err := os.OpenFile("logrus.log", os.O_CREATE|os.O_WRONLY, 0666)
     // if err == nil {
-    // 	log.Out = file
+    //     logrus.SetOutput(file)
+    //     logrus.SetLevel(logrus.InfoLevel)
     // } else {
-    // 	log.Info("Failed to log to file, using default stderr")
+    //     logrus.Info("Failed to log to file, using default stderr")
     // }
 }
 

@@ -79,6 +79,7 @@ func DeleteTimeframeHandler(w http.ResponseWriter, req *http.Request) {
 	lr.Info("Delete timeframe from DB with uuid:", uuid)
 
 	if err != nil {
+		lr.Error(err)
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}

@@ -2,7 +2,6 @@ package handlers
 
 import (
 	"encoding/json"
-	"fmt"
 	"net/http"
 
 	"github.com/gorilla/mux"
@@ -66,7 +65,6 @@ func CreateGroupHandler(w http.ResponseWriter, req *http.Request) {
 	}
 
 	group.DT = helpers.GetCurrentLocalTime()
-	fmt.Println("TEST")
 	err = db.CreateGroup(&group)
 	if err != nil {
 		lr.Error(err)
