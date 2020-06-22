@@ -1,0 +1,10 @@
+development:
+    dialect: postgres
+    datasource: host=postgres-goapp dbname=${POSTGRES_DB} user=${POSTGRES_USER} password=qwerty sslmode=disable
+    dir: project/migrations
+    table: migrations
+production:
+    dialect: postgres
+    datasource: host=postgres-goapp dbname=${POSTGRES_DB} user=${POSTGRES_USER} password=qwerty sslmode=disable
+    dir: project/migrations
+    table: migrations
